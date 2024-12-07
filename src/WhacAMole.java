@@ -9,13 +9,27 @@ public class WhacAMole {
     int boardHeight = 650; // 50px for the top text panel
 
     JFrame frame = new JFrame("Mario: Whac A Mole");
+    JLabel textLabel = new JLabel();
+    JPanel textPanel = new JPanel();
 
     WhacAMole() {
+        // frame settings
         frame.setVisible(true);
         frame.setSize(boardWidth, boardHeight);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
+
+        // text label settings
+        textLabel.setFont(new Font("Arial", Font.PLAIN, 50));
+        textLabel.setHorizontalAlignment(JLabel.CENTER);
+        textLabel.setText("Score: 0");
+        textLabel.setOpaque(true);
+
+        // label added to panel
+        textPanel.setLayout(new BorderLayout());
+        textPanel.add(textLabel);
+        frame.add(textPanel);
     }
 }
