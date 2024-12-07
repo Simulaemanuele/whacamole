@@ -11,6 +11,9 @@ public class WhacAMole {
     JFrame frame = new JFrame("Mario: Whac A Mole");
     JLabel textLabel = new JLabel();
     JPanel textPanel = new JPanel();
+    JPanel boardPanel = new JPanel();
+
+    JButton[] board = new JButton[9];
 
     WhacAMole() {
         // frame settings
@@ -30,6 +33,10 @@ public class WhacAMole {
         // label added to panel
         textPanel.setLayout(new BorderLayout());
         textPanel.add(textLabel);
-        frame.add(textPanel);
+        frame.add(textPanel, BorderLayout.NORTH);
+
+        boardPanel.setLayout(new GridLayout(3, 3));
+        // boardPanel.setBackground(Color.black);
+        frame.add(boardPanel);
     }
 }
