@@ -67,7 +67,7 @@ public class WhacAMole {
             // tile.setIcon(moleIcon);
         }
 
-        setMoleTimer = new Timer(1000, new ActionListener() {
+        setMoleTimer = new Timer(800, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (currentMoleTile != null) {
                     currentMoleTile.setIcon(null);
@@ -78,13 +78,39 @@ public class WhacAMole {
                 int num = random.nextInt(9); // random number between 0 - 9
                 JButton tile = board[num];
 
+                // if tile is occupied by plant skip this tile
+                if (currentPlantTile == tile) {
+                    return;
+                }
+
                 currentMoleTile = tile;
                 currentMoleTile.setIcon(moleIcon);
             }
         });
 
-        // start the timer
+        setPlantTimer = new Timer(1000, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (currentPlantTile != null) {
+                    currentPlantTile.setIcon(null);
+                    currentPlantTile = null;
+                }
+
+                int num = random.nextInt(9);
+                JButton tile = board[num];
+
+                if (currentMoleTile == tile) {
+                    return;
+                }
+
+                currentPlantTile = tile;
+                currentPlantTile.setIcon(plantIcon);
+            }
+        });
+
+        // start the timers
         setMoleTimer.start();
+        setPlantTimer.start();
+
         // set visible later because we have to wait the complete components loading
         frame.setVisible(true);
     }
