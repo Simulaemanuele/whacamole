@@ -18,6 +18,16 @@ public class WhacAMole {
     ImageIcon moleIcon;
     ImageIcon plantIcon;
 
+    // base variable for tile animation
+
+    JButton currentMoleTile;
+    JButton currentPlantTile;
+
+    Random random = new Random();
+
+    Timer setMoleTimer;
+    Timer setPlantTimer;
+
     WhacAMole() {
         // frame settings
         frame.setSize(boardWidth, boardHeight);
@@ -57,6 +67,24 @@ public class WhacAMole {
             // tile.setIcon(moleIcon);
         }
 
+        setMoleTimer = new Timer(1000, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (currentMoleTile != null) {
+                    currentMoleTile.setIcon(null);
+                    currentMoleTile = null;
+                }
+
+                // random select other tile
+                int num = random.nextInt(9); // random number between 0 - 9
+                JButton tile = board[num];
+
+                currentMoleTile = tile;
+                currentMoleTile.setIcon(moleIcon);
+            }
+        });
+
+        // start the timer
+        setMoleTimer.start();
         // set visible later because we have to wait the complete components loading
         frame.setVisible(true);
     }
