@@ -28,6 +28,8 @@ public class WhacAMole {
     Timer setMoleTimer;
     Timer setPlantTimer;
 
+    int score = 0;
+
     WhacAMole() {
         // frame settings
         frame.setSize(boardWidth, boardHeight);
@@ -58,6 +60,8 @@ public class WhacAMole {
         Image moleImg = new ImageIcon(getClass().getResource("./assets/monty.png")).getImage();
         moleIcon = new ImageIcon(moleImg.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH));
 
+        score = 0;
+
         // loop that create buttons
         for (int i = 0; i < 9; i++) {
             JButton tile = new JButton();
@@ -65,6 +69,23 @@ public class WhacAMole {
             boardPanel.add(tile);
             tile.setFocusable(false);
             // tile.setIcon(moleIcon);
+            tile.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    JButton tile = (JButton) e.getSource();
+
+                    if (tile == currentMoleTile) {
+                        score += 10;
+                        textLabel.setText("Score: " + Integer.toString(score));
+                    } else if (tile == currentPlantTile) {
+                        textLabel.setText("Game Over: " + Integer.toString(score));
+                        setMoleTimer.stop();
+                        setPlantTimer.stop();
+                        for (int i = 0; i < 9; i++) {
+                            board[i].setEnabled(false);
+                        }
+                    }
+                }
+            });
         }
 
         setMoleTimer = new Timer(800, new ActionListener() {
