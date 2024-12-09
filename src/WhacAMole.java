@@ -23,12 +23,16 @@ public class WhacAMole {
     JButton currentMoleTile;
     JButton currentPlantTile;
 
+    JButton restartButton = new JButton();
+
     Random random = new Random();
 
     Timer setMoleTimer;
     Timer setPlantTimer;
 
     int score = 0;
+
+    boolean inGame;
 
     WhacAMole() {
         // frame settings
@@ -53,6 +57,25 @@ public class WhacAMole {
         // boardPanel.setBackground(Color.black);
         frame.add(boardPanel);
 
+        restartButton.setText("Restart");
+        restartButton.setFont(new Font("Arial", Font.PLAIN, 13));
+        restartButton.setBorderPainted(true);
+        restartButton.setSize(75, 35);
+        restartButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                inGame = true;
+                setMoleTimer.start();
+                setPlantTimer.start();
+                for (int i = 0; i < 9; i++) {
+                    board[i].setEnabled(true);
+                }
+                score = 0;
+                textLabel.setText("Score: " + Integer.toString(score));
+            }
+        });
+
+        textLabel.add(restartButton);
+
         // plantIcon = new ImageIcon(getClass().getResource("../assets/piranha.png"));
         Image plantImg = new ImageIcon(getClass().getResource("./assets/piranha.png")).getImage();
         plantIcon = new ImageIcon(plantImg.getScaledInstance(150, 150, java.awt.Image.SCALE_SMOOTH));
@@ -69,6 +92,8 @@ public class WhacAMole {
             boardPanel.add(tile);
             tile.setFocusable(false);
             // tile.setIcon(moleIcon);
+
+            // logic for scoring and game over
             tile.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     JButton tile = (JButton) e.getSource();
@@ -83,12 +108,13 @@ public class WhacAMole {
                         for (int i = 0; i < 9; i++) {
                             board[i].setEnabled(false);
                         }
+                        inGame = false;
                     }
                 }
             });
         }
 
-        setMoleTimer = new Timer(800, new ActionListener() {
+        setMoleTimer = new Timer(1000, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (currentMoleTile != null) {
                     currentMoleTile.setIcon(null);
@@ -109,7 +135,7 @@ public class WhacAMole {
             }
         });
 
-        setPlantTimer = new Timer(1000, new ActionListener() {
+        setPlantTimer = new Timer(1500, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (currentPlantTile != null) {
                     currentPlantTile.setIcon(null);
@@ -128,9 +154,14 @@ public class WhacAMole {
             }
         });
 
+        // flag for checking if a game session is running
+        inGame = true;
+
         // start the timers
-        setMoleTimer.start();
-        setPlantTimer.start();
+        if (inGame == true) {
+            setMoleTimer.start();
+            setPlantTimer.start();
+        }
 
         // set visible later because we have to wait the complete components loading
         frame.setVisible(true);
