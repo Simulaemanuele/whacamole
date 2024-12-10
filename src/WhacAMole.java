@@ -114,45 +114,8 @@ public class WhacAMole {
             });
         }
 
-        setMoleTimer = new Timer(1000, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (currentMoleTile != null) {
-                    currentMoleTile.setIcon(null);
-                    currentMoleTile = null;
-                }
-
-                // random select other tile
-                int num = random.nextInt(9); // random number between 0 - 9
-                JButton tile = board[num];
-
-                // if tile is occupied by plant skip this tile
-                if (currentPlantTile == tile) {
-                    return;
-                }
-
-                currentMoleTile = tile;
-                currentMoleTile.setIcon(moleIcon);
-            }
-        });
-
-        setPlantTimer = new Timer(1500, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (currentPlantTile != null) {
-                    currentPlantTile.setIcon(null);
-                    currentPlantTile = null;
-                }
-
-                int num = random.nextInt(9);
-                JButton tile = board[num];
-
-                if (currentMoleTile == tile) {
-                    return;
-                }
-
-                currentPlantTile = tile;
-                currentPlantTile.setIcon(plantIcon);
-            }
-        });
+        setMoleTimer = timerActionLoop(1000, new JButton[] { currentMoleTile }, board, moleIcon, true);
+        setPlantTimer = timerActionLoop(1500, new JButton[] { currentPlantTile }, board, plantIcon, false);
 
         // flag for checking if a game session is running
         inGame = true;
@@ -165,5 +128,34 @@ public class WhacAMole {
 
         // set visible later because we have to wait the complete components loading
         frame.setVisible(true);
+    }
+
+    public Timer timerActionLoop(int delay, JButton[] currentTileWrapper, JButton[] board, ImageIcon icon,
+            boolean isMole) {
+        return new Timer(delay, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (currentTileWrapper[0] != null) {
+                    currentTileWrapper[0].setIcon(null);
+                }
+
+                // random select other tile
+                JButton tile;
+                do {
+                    int num = random.nextInt(9); // random number between 0 - 9
+                    tile = board[num];
+                } while (tile == currentMoleTile || tile == currentPlantTile);
+
+                // Update ref and icon of the tile
+                currentTileWrapper[0] = tile;
+                currentTileWrapper[0].setIcon(icon);
+
+                // update the global ref
+                if (isMole) {
+                    currentMoleTile = currentTileWrapper[0];
+                } else {
+                    currentPlantTile = currentTileWrapper[0];
+                }
+            }
+        });
     }
 }
