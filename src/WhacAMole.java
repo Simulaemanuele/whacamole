@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Random;
+import java.nio.file.*;
 
 import javax.swing.*;
 
@@ -11,6 +12,7 @@ public class WhacAMole {
     private static final int BOARD_HEIGHT = 650; // 50px for the top text panel
     private static final int MOLE_DELAY = 1000;
     private static final int PLANT_DELAY = 1500;
+    private static final String BEST_SCORE_FILE = "best_score.txt";
 
     // game variables
     private JFrame frame;
@@ -37,10 +39,14 @@ public class WhacAMole {
     private TileTimer plantTimer;
 
     private int score = 0;
+    private int bestScore = 0;
 
     private boolean inGame;
 
     WhacAMole() {
+        // load best score
+        loadBestScore();
+
         // setup restart button
         setupRestartButton();
 
@@ -87,8 +93,8 @@ public class WhacAMole {
     }
 
     private void setupTextPanel() {
-        textLabel = new JLabel("Score: 0", SwingConstants.CENTER);
-        textLabel.setFont(new Font("Arial", Font.PLAIN, 50));
+        textLabel = new JLabel("Score: 0 Best: " + bestScore, SwingConstants.CENTER);
+        textLabel.setFont(new Font("Arial", Font.PLAIN, 25));
         textLabel.setOpaque(true);
 
         textPanel = new JPanel(new BorderLayout());
@@ -143,7 +149,11 @@ public class WhacAMole {
     }
 
     private void gameOver() {
-        textLabel.setText("Game Over: " + score);
+        if (score > bestScore) {
+            bestScore = score;
+            saveBestScore();
+        }
+        textLabel.setText("Game Over: " + score + " | Best: " + bestScore);
         moleTimer.stop();
         plantTimer.stop();
         for (JButton button : board) {
@@ -167,6 +177,27 @@ public class WhacAMole {
         inGame = true;
         moleTimer.start();
         plantTimer.start();
+    }
+
+    private void loadBestScore() {
+        try {
+            Path path = Paths.get(BEST_SCORE_FILE);
+            if (Files.exists(path)) {
+                String content = Files.readString(path);
+                bestScore = Integer.parseInt(content.trim());
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading best score: " + e.getMessage());
+            bestScore = 0;
+        }
+    }
+
+    private void saveBestScore() {
+        try {
+            Files.writeString(Paths.get(BEST_SCORE_FILE), Integer.toString(bestScore));
+        } catch (Exception e) {
+            System.err.println("Error saving best score: " + e.getMessage());
+        }
     }
 
     private class TileTimer {
